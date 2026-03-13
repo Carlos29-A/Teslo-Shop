@@ -26,19 +26,19 @@ export const TopMenu = () => {
         <div className="hidden sm:flex items-center gap-1">
             <Link
                 className="relative px-3 py-2 text-sm font-medium after:absolute after:bottom-1 after:left-3 after:right-3 after:h-1 after:bg-blue-500 after:scale-x-0 after:origin-center after:transition-transform after:duration-500 after:ease-out hover:after:scale-x-100"
-                href="/category/men"
+                href="/gender/men"
             >
                 Hombres
             </Link>
             <Link
                 className="relative px-3 py-2 text-sm font-medium after:absolute after:bottom-1 after:left-3 after:right-3 after:h-1 after:bg-blue-500 after:scale-x-0 after:origin-center after:transition-transform after:duration-500 after:ease-out hover:after:scale-x-100"
-                href="/category/women"
+                href="/gender/women"
             >
                 Mujeres
             </Link>
             <Link
                 className="relative px-3 py-2 text-sm font-medium after:absolute after:bottom-1 after:left-3 after:right-3 after:h-1 after:bg-blue-500 after:scale-x-0 after:origin-center after:transition-transform after:duration-500 after:ease-out hover:after:scale-x-100"
-                href="/category/kid"
+                href="/gender/kid"
             >
                 Niños
             </Link>
