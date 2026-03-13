@@ -1,16 +1,35 @@
+export const revalidate = 604800;
+
+import { getProductBySlug } from "@/actions";
 import { ProductMobileSlideShow, ProductSlideShow, QuantitySelector, SizeSelector } from "@/components";
+import { StockLabel } from "@/components/product/stock-label/StockLabel";
 import { titleFont } from "@/config/fonts";
-import { initialData } from "@/seed/seed";
 import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ slug: string }>
 }
 
+// generate Metadata
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+  return {
+    title: product?.title ?? "Producto no encontrado",
+    description: product?.description ?? "Producto no encontrado",
+    openGraph: {
+      title: product?.title ?? "Producto no encontrado",
+      description: product?.description ?? "Producto no encontrado",
+      images: [`/products/${product?.images[1]}`],
+    },
+  }
+}
+
+
 
 export default async function ProductPageForSlug({ params }: Props) {
   const { slug } = await params;
-  const product = initialData.products.find(product => product.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if ( !product ) {
     notFound();
@@ -39,6 +58,10 @@ export default async function ProductPageForSlug({ params }: Props) {
       </div>
       {/* Detalles */}
       <div className="col-span-1 px-5 ">
+        
+        <StockLabel 
+          slug={ product.slug }
+        />
         <h1 className={ `${titleFont.className} antialiased font-bold text-xl`}>
           { product.title }
         </h1>

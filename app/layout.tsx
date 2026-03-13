@@ -6,7 +6,10 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: "Teslo |  Shop",
+  title: {
+    template: "%s - Teslo | Shop",
+    default: "Teslo | Shop",
+  },
   description: "Un e-commerce creado con Next.js, Tailwind CSS y TypeScript.",
 };
 
