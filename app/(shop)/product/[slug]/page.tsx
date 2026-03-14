@@ -5,6 +5,7 @@ import { ProductMobileSlideShow, ProductSlideShow, QuantitySelector, SizeSelecto
 import { StockLabel } from "@/components/product/stock-label/StockLabel";
 import { titleFont } from "@/config/fonts";
 import { notFound } from "next/navigation";
+import { AddToCart } from "./ui/AddToCart";
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -69,21 +70,7 @@ export default async function ProductPageForSlug({ params }: Props) {
           S/.{ product.price}
         </p>
 
-         { /* Selector de tallas */}
-        <SizeSelector
-          selectedSize={ product.sizes[0] }
-          availableSizes={ product.sizes }
-        />
-
-         { /* Selector de cantidad */}
-        <QuantitySelector
-          quantity={ 2 }
-        />
-
-         { /* Button */}
-         <button className="my-5 btn-primary cursor-pointer">
-          Agregar al carrito
-         </button>
+         <AddToCart product={ product } />
          { /* Descripcion */}
          <h3 className="font-bold text-sm ">Descripción</h3>
          <p className="font-light">
