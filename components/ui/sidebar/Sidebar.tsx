@@ -2,15 +2,19 @@
 
 import { useUiStore } from "@/store";
 import Link from "next/link";
-import { IoCloseOutline, IoLogInOutline, IoLogOutOutline, IoPeopleOutline, IoPersonOutline, IoSearchOutline, IoShirtOutline, IoTicketOutline } from "react-icons/io5"
+import { IoCloseOutline, IoSearchOutline } from "react-icons/io5"
 import clsx from "clsx";
 import { SidebarLinks } from "./SidebarLinks";
-
+import { signOut, useSession } from "next-auth/react";
 export const Sidebar = () => {
 
     const isSideMenu = useUiStore(state => state.isSideMenuOpen);
     const closeMenu = useUiStore(state => state.closeSideMenu); 
     const links = SidebarLinks;
+
+    const { data: session } = useSession();
+    const isAuthenticated = !!session?.user;
+    const isAdmin = (session?.user as any)?.role === "admin";
 
     return (
         <div>
@@ -58,25 +62,41 @@ export const Sidebar = () => {
 
                 {/* Menú */}
                 {
-                    links && links.map((link, index) =>
-                        link.href === "/auth/logout"
-                            ? (
-                                <div
-                                    key={ `${ link.href }-${ index }` }
-                                    className="w-full bg-gray-200 h-px mt-10"
-                                />
-                            )
-                            : (
-                                <Link
-                                    key={ `${ link.href }-${ index }` }
-                                    href={ link.href }
-                                    className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all "
-                                >
-                                    <link.icon size={ 30 } />
-                                    <span className="ml-3 text-xl">{ link.label }</span>
-                                </Link>
-                            )
-                    )
+                    links
+                        .filter(link => {
+                            if (!isAuthenticated) return link.href === "/auth/login";
+                            if (link.href === "/auth/login") return false;
+                            if (link.adminOnly) return isAdmin;
+                            return true;
+                        })
+                        .map((link, index) =>
+                            link.href === "/auth/logout"
+                                ? (
+                                    <button
+                                        key={ `${ link.href }-${ index }` }
+                                        className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all w-full cursor-pointer"
+                                        onClick={() => signOut()}
+                                    >
+                                        <link.icon size={ 30 } />
+                                        <span className="ml-3 text-xl">{ link.label }</span>
+                                    </button>
+                                )
+                                : (
+                                    <div key={ `${ link.href }-${ index }` }>
+                                        { link.href === "/users" && (
+                                            <div className="w-full bg-gray-200 h-px mt-10" />
+                                        )}
+                                        <Link
+                                            href={ link.href }
+                                            className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+                                            onClick={ () => closeMenu() }
+                                        >
+                                            <link.icon size={ 30 } />
+                                            <span className="ml-3 text-xl">{ link.label }</span>
+                                        </Link>
+                                    </div>
+                                )
+                        )
                 }
             </nav>
         </div>

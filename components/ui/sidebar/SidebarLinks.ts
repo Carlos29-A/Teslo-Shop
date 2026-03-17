@@ -4,6 +4,7 @@ interface SidebarLink {
     label: string;
     icon: React.ElementType;
     href: string;
+    adminOnly?: boolean;
 }
 
 export const SidebarLinks: SidebarLink[] = [
@@ -20,7 +21,7 @@ export const SidebarLinks: SidebarLink[] = [
     {
         label: 'Ingresar',
         icon: IoLogInOutline,
-        href: '/login'
+        href: '/auth/login'
     },
     {
         label: 'Salir',
@@ -28,18 +29,21 @@ export const SidebarLinks: SidebarLink[] = [
         href: '/auth/logout'
     },
     {
+        label: 'Usuarios',
+        icon: IoPeopleOutline,
+        href: '/users',
+        adminOnly: true
+    },
+    {
         label: 'Productos',
         icon: IoShirtOutline,
-        href: '/products'
+        href: '/products',
+        adminOnly: true
     },
     {
         label: 'Ordenes',
         icon: IoTicketOutline,
-        href: '/orders'
-    },
-    {
-        label: 'Usuarios',
-        icon: IoPeopleOutline,
-        href: '/users'
+        href: '/orders',
+        adminOnly: true
     }
 ]
