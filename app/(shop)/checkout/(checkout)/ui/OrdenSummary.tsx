@@ -1,5 +1,6 @@
 "use client"
 
+import { placeOrder } from "@/actions";
 import { useAddressStore, useCartStore } from "@/store";
 import { currencyFormat } from "@/utils";
 import clsx from "clsx";
@@ -21,19 +22,20 @@ export const OrdenSummary = () => {
     // Traer los productos del carrito
     const products = useCartStore(state => state.cart);
 
-    const handlePlaceOrder = () => {
+    const handlePlaceOrder = async () => {
         setOnPlaceOrder(true);
         const productData = products.map(product => ({
-            id: product.id,
+            productId: product.id,
             quantity: product.quantity,
-            sizes: product.sizes,
+            size: product.sizes,
         }))
-        console.log({address, productData})
-        // Simular un proceso de 3 segundos
-        setTimeout(() => {
-            setOnPlaceOrder(false);
-        }, 3000);
-    }
+        
+        // Llamar a la acción para colocar la orden
+        const resp =await placeOrder(productData, address)
+        console.log(resp)
+
+        setOnPlaceOrder(false);
+      }
 
     useEffect(() => {
         setLoading(true);
