@@ -6,6 +6,7 @@ import { useAddressStore } from "@/store";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -41,6 +42,7 @@ export const AddressForm = ({ userAddress }: Props) => {
     const setAddress = useAddressStore(state => state.saveAddress);
     const [saveAddress, setSaveAddress] = useState(false);
     const address = useAddressStore(state => state.address);
+    const router = useRouter();
 
 
     //Obtener el id del usuario autenticado, sino existe, redirigir a la página de login
@@ -78,6 +80,8 @@ export const AddressForm = ({ userAddress }: Props) => {
             //Eliminar la dirección de la base de datos
             deletUserAddress(session!.user?.id as string)
         }
+        //Redirigir a la página de checkout
+        router.push('/checkout');
     }
 
     return (
