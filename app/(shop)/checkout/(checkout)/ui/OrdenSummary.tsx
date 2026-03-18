@@ -2,11 +2,14 @@
 
 import { useAddressStore, useCartStore } from "@/store";
 import { currencyFormat } from "@/utils";
+import clsx from "clsx";
 import { useEffect, useState } from "react"
 
 export const OrdenSummary = () => {
   
     const [loading, setLoading] = useState(false);
+    // Estado para controlar el botón de colocar orden
+    const [onPlaceOrder, setOnPlaceOrder] = useState(false);
     
     /*Traer los datos de la dirección de entrega*/
     const address = useAddressStore(state => state.address);
@@ -15,7 +18,22 @@ export const OrdenSummary = () => {
     const subTotal = useCartStore(state => state.subTotal());
     const tax = useCartStore(state => state.tax());
     const total = useCartStore(state => state.total());
+    // Traer los productos del carrito
+    const products = useCartStore(state => state.cart);
 
+    const handlePlaceOrder = () => {
+        setOnPlaceOrder(true);
+        const productData = products.map(product => ({
+            id: product.id,
+            quantity: product.quantity,
+            sizes: product.sizes,
+        }))
+        console.log({address, productData})
+        // Simular un proceso de 3 segundos
+        setTimeout(() => {
+            setOnPlaceOrder(false);
+        }, 3000);
+    }
 
     useEffect(() => {
         setLoading(true);
@@ -58,10 +76,25 @@ export const OrdenSummary = () => {
 
             </div>
 
+            {/* Mensaje de Error
+            <div className="mt-5 mb-2 w-full">
+              <div className="flex w-full justify-center py-2 px-4 rounded-md font-semibold transition-all duration-200 bg-red-600 text-white cursor-pointer">
+                Error al colocar la orden
+              </div>
+            </div>
+            */ }
+
             <div className="mt-5 mb-2 w-full">
               {/* TODO: href a la página de ordenes*/}
-              <button  className="flex btn-primary hover:bg-blue-800 cursor-pointer justify-center ">
-                Colocar orden
+              <button  
+              disabled={onPlaceOrder}
+              onClick={() => handlePlaceOrder()}
+              className={clsx("flex w-full justify-center py-2 px-4 rounded-md font-semibold transition-all duration-200", {
+                "bg-blue-600 hover:bg-blue-800 text-white cursor-pointer": !onPlaceOrder,
+                "bg-gray-300 text-gray-400 cursor-not-allowed opacity-60": onPlaceOrder,
+              })}
+              >
+                { onPlaceOrder ? "Procesando..." : "Colocar orden" }
               </button>
             </div>
 

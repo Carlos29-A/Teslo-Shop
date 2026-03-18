@@ -68,9 +68,9 @@ export const AddressForm = ({ userAddress }: Props) => {
     const isFormValid = watchedFields.every(field => field !== undefined && field.toString().trim() !== '');
 
     const onSubmit = (data: AddressFormInputs) => {
-        setAddress(data);
-
+        
         const { saveAddress, ...addressData } = data;
+        setAddress(addressData);
 
         if (saveAddress) {
             //Guardar la dirección en la base de datos
