@@ -14,20 +14,13 @@ export const getUserAddrss = async (userId: string) => {
                 userId
             }
         })
-        // Si no existe, retornar error
-        if (!storedAddress) {
-            return {
-                ok: false,
-                message: "Dirección del usuario no encontrada",
-            }
-        }
-        const { userId: _, ...address } = storedAddress;
-        // Si existe, retornar la dirección
+        if (!storedAddress) return null;
+
+        const { userId: _, id: __, ...address } = storedAddress;
         return address;
+
     }catch(error) {
-        return {
-            ok: false,
-            message: "Error al obtener la dirección del usuario",
-        }
+        console.error(error);
+        return null;
     }
 }

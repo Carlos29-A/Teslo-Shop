@@ -22,7 +22,7 @@ export default async function AddressPage() {
 
         <Title title="Dirección de entrega" subtitle="Ingresa los datos para el envío dentro de Perú" />
 
-        <AddressForm userAddress={ userAddress as Address } />
+        <AddressForm userAddress={ userAddress ?? undefined } />
       </div>
     </div>
   );

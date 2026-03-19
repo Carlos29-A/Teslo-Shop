@@ -16,3 +16,5 @@ export * from "./address/get-user-address";
 
 // Order
 export * from "./order/place-order";
+export * from "./order/get-order-by-id";
+export * from "./order/get-ordes-by-user";

@@ -58,6 +58,7 @@ const createOrReplaceAddress = async ( address: Address, userId: string) => {
 
 
     }catch(error) {
+        console.error(error);
         throw new Error("Error al crear o reemplazar la dirección del usuario");
     }
 }

@@ -2,7 +2,7 @@
 
 import { deletUserAddress, setUserAddress } from "@/actions";
 import { Address } from "@/interfaces";
-import { useAddressStore } from "@/store";
+import { useAddressStore, useCartStore } from "@/store";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -44,7 +44,6 @@ export const AddressForm = ({ userAddress }: Props) => {
     const address = useAddressStore(state => state.address);
     const router = useRouter();
 
-
     //Obtener el id del usuario autenticado, sino existe, redirigir a la página de login
     const { data: session } = useSession({
         required: true,
@@ -60,27 +59,30 @@ export const AddressForm = ({ userAddress }: Props) => {
 
     useEffect(() => {
         if (address.name) {
-            reset(address);
+            const { name, lastName, dni, phone, department, province, district, postalCode, address: addr, reference } = address as any;
+            reset({ name, lastName, dni, phone, department, province, district, postalCode, address: addr, reference });
         }
     }, [address, reset])
 
     const watchedFields = watch(['name', 'lastName', 'dni', 'phone', 'department', 'province', 'district', 'postalCode', 'address']);
     const isFormValid = watchedFields.every(field => field !== undefined && field.toString().trim() !== '');
 
-    const onSubmit = (data: AddressFormInputs) => {
-        
-        const { saveAddress, ...addressData } = data;
+    const onSubmit = async (data: AddressFormInputs) => {
+
+        const { saveAddress, name, lastName, dni, phone, department, province, district, postalCode, address: addr, reference } = data;
+        const addressData = { name, lastName, dni, phone, department, province, district, postalCode, address: addr, reference };
         setAddress(addressData);
 
         if (saveAddress) {
             //Guardar la dirección en la base de datos
-            setUserAddress(addressData, session!.user?.id as string)
-
+            await setUserAddress(addressData, session!.user?.id as string);
         } else {
             //Eliminar la dirección de la base de datos
-            deletUserAddress(session!.user?.id as string)
+            await deletUserAddress(session!.user?.id as string);
         }
-        //Redirigir a la página de checkout
+        // Limpair el carrito de compras
+
+
         router.push('/checkout');
     }
 

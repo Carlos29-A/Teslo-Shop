@@ -4,10 +4,11 @@ import { placeOrder } from "@/actions";
 import { useAddressStore, useCartStore } from "@/store";
 import { currencyFormat } from "@/utils";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 
 export const OrdenSummary = () => {
-  
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     // Estado para controlar el botón de colocar orden
     const [onPlaceOrder, setOnPlaceOrder] = useState(false);
@@ -21,6 +22,11 @@ export const OrdenSummary = () => {
     const total = useCartStore(state => state.total());
     // Traer los productos del carrito
     const products = useCartStore(state => state.cart);
+    // Clear cart
+    const clearCart = useCartStore(state => state.clearCart);
+
+    // Manejador de mensajes de error
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const handlePlaceOrder = async () => {
         setOnPlaceOrder(true);
@@ -32,9 +38,15 @@ export const OrdenSummary = () => {
         
         // Llamar a la acción para colocar la orden
         const resp =await placeOrder(productData, address)
-        console.log(resp)
+        if(!resp.ok) {
+          setOnPlaceOrder(false);
+          setErrorMessage(resp.message);
+          return;
+        }
 
-        setOnPlaceOrder(false);
+        // TODO: todo salio bien
+        clearCart();
+        router.replace(`/orders/${resp.order!.id}`);
       }
 
     useEffect(() => {
@@ -84,7 +96,8 @@ export const OrdenSummary = () => {
                 Error al colocar la orden
               </div>
             </div>
-            */ }
+            */ }  
+            <p className="text-red-500 text-center mt-5">{ errorMessage }</p>
 
             <div className="mt-5 mb-2 w-full">
               {/* TODO: href a la página de ordenes*/}

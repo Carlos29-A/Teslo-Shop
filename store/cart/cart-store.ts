@@ -14,6 +14,7 @@ interface State {
     subTotal : () => number;
     tax : () => number;
     total : () => number;
+    clearCart : () => void;
 }
 
 
@@ -84,6 +85,11 @@ export const useCartStore = create<State>()(
             },
             total: () => {
                 return get().subTotal() + get().tax();
+            },
+            clearCart: () => {
+                return set({
+                    cart: []
+                })
             }
         })
         ,{
