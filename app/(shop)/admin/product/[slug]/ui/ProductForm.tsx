@@ -1,10 +1,11 @@
 "use client";
 
-import { ICategory, Product } from "@/interfaces";
+import { ICategory, Product, ProductImage } from "@/interfaces";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 
 interface Props {
-  product: Product;
+  product: Product & { ProductImage?: ProductImage[]  };
   categories: ICategory[];
 }
 
@@ -149,6 +150,29 @@ export const ProductForm = ({ product, categories }: Props) => {
 
           </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {
+                product.ProductImage?.map( image => (
+                  <div key={ image.id }>
+                    <Image 
+                      alt={ product.title } 
+                      width={ 300 } 
+                      height={ 300 } 
+                      src={ `/products/${image.url}` }
+                      className="rounded-t shadow-md"
+                    />
+
+                    <button
+                      type="button"
+                      className="bg-red-500 hover:bg-red-700 transition-all duration-300 ease-out text-white py-2 px-4 w-full rounded-b-xl cursor-pointer"
+                      onClick={() => console.log(image.id, image.url)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))
+              }
+            </div>
         </div>
       </div>
     </form>

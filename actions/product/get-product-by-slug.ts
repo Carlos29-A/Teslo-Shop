@@ -16,6 +16,7 @@ export const getProductBySlug = async (slug: string) => {
                 ProductImage: {
                     select: {
                         url: true,
+                        id: true,
                     }
                 }
             }
