@@ -31,19 +31,19 @@ export const SidebarLinks: SidebarLink[] = [
     {
         label: 'Usuarios',
         icon: IoPeopleOutline,
-        href: '/users',
+        href: '/admin/users',
         adminOnly: true
     },
     {
         label: 'Productos',
         icon: IoShirtOutline,
-        href: '/products',
+        href: '/admin/products',
         adminOnly: true
     },
     {
         label: 'Ordenes',
         icon: IoTicketOutline,
-        href: '/orders',
+        href: '/admin/orders',
         adminOnly: true
     }
 ]

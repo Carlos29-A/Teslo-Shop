@@ -18,7 +18,12 @@ export * from "./address/get-user-address";
 export * from "./order/place-order";
 export * from "./order/get-order-by-id";
 export * from "./order/get-ordes-by-user";
+export * from "./order/get-paginated-orders";
 
 // Payments
 export * from "./payments/set-transaction-id";
 export * from "./payments/paypal-check-payment";
+
+// User
+export * from "./user/get-paginater-user";
+export * from "./user/change-user-role";
