@@ -20,4 +20,7 @@ export * from "./product/slideshow/ProductMobileSlideShow";
 export * from "./product/stock-label/StockLabel";
 
 // Provider
-export * from "./provider/Provider";
+export * from "./providers/Providers";
+
+// PayPal
+export * from "./paypal/PayPalButton";
