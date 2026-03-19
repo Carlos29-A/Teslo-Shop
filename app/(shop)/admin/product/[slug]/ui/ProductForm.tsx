@@ -1,12 +1,13 @@
 "use client";
 
+import { createUpdateProduct } from "@/actions";
 import { ICategory, Product, ProductImage } from "@/interfaces";
 import clsx from "clsx";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 
 interface Props {
-  product: Product & { ProductImage?: ProductImage[]  };
+  product: Partial<Product> & { ProductImage?: ProductImage[]  };
   categories: ICategory[];
 }
 
@@ -35,14 +36,36 @@ export const ProductForm = ({ product, categories }: Props) => {
   const { handleSubmit, register, formState: { isValid }, getValues, setValue , watch } = useForm<FormInputs>({
     defaultValues: {
       ...product,
-      tags: product.tags.join(', '),
+      tags: product.tags?.join(', '),
       sizes: product.sizes ?? [],
     }
   });
   watch("sizes");
 
-  const onSubmit = (data: FormInputs) => {
-    console.log(data);
+  const onSubmit = async (data: FormInputs) => {
+    const formData = new FormData();
+
+    const { ...productToSave} = data;
+
+    if(product.id) {
+      formData.append("id", product.id ?? '');
+    }
+    formData.append("title", productToSave.title);
+    formData.append("slug", productToSave.slug);
+    formData.append("description", productToSave.description);
+    formData.append("price", productToSave.price.toString());
+    formData.append("inStock", productToSave.inStock.toString());
+    formData.append("sizes", productToSave.sizes.toString());
+    formData.append("tags", productToSave.tags);
+    formData.append("gender", productToSave.gender);
+    formData.append("categoryId", productToSave.categoryId);
+
+
+    const { ok } = await createUpdateProduct(formData);
+
+    console.log(ok);
+    
+
   }
 
   const onSizeChange = (size: string ) => {
@@ -129,6 +152,12 @@ export const ProductForm = ({ product, categories }: Props) => {
 
       {/* Selector de tallas y fotos */}
       <div className="w-full">
+        <div className="flex flex-col mb-2">
+          <span>Inventario</span>
+          <input type="number" className="p-2 border border-gray-300 rounded-md bg-gray-200" 
+          {...register("inStock", { required: true, min: 0 })}
+          />
+        </div>
         {/* As checkboxes */}
         <div className="flex flex-col">
 
@@ -174,7 +203,7 @@ export const ProductForm = ({ product, categories }: Props) => {
                 product.ProductImage?.map( image => (
                   <div key={ image.id }>
                     <Image 
-                      alt={ product.title } 
+                      alt={ product.title ?? '' } 
                       width={ 300 } 
                       height={ 300 } 
                       src={ `/products/${image.url}` }

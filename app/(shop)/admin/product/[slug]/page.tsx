@@ -13,8 +13,7 @@ export default async function ProductAdminPage( { params }: Props ) {
     const categoriesResult = await getCategories();
     
     // Todo: new
-
-    if( !product) {
+    if( !product && slug !== "new") {
         redirect('/admin/products')
     }
 
@@ -30,7 +29,7 @@ export default async function ProductAdminPage( { params }: Props ) {
     return (
         <>
             <Title title={`${title}`} />
-            <ProductForm product={product} categories={categories} />
+            <ProductForm product={product ?? {}} categories={categories} />
         </>
     )
 }
