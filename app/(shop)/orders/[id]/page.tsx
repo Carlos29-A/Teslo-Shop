@@ -1,10 +1,8 @@
 import { getOrderById } from "@/actions";
-import { PayPalButton, Title } from "@/components";
+import { OrderStatus, PayPalButton, Title } from "@/components";
 import { currencyFormat } from "@/utils";
-import clsx from "clsx";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { IoCartOutline } from "react-icons/io5";
 
 interface Props {
   params: Promise<{ id: string }>
@@ -33,23 +31,9 @@ export default async function OrdersPageForId({ params }: Props) {
           { /* Carrito */}
           <div className="flex flex-col mt-5">
             
-            <div className={
-              clsx( 
-                "flex items-center rounded-lg py-2 px-3.5 text.xs font.bold text-white mb-5",
-                {
-                  "bg-red-600": !order?.isPaid,
-                  "bg-green-600": order?.isPaid,
-                }
-              )
-            }>
-              <IoCartOutline size= { 30} />
-              {/* <span className="mx-2"> Pendiente de pago</span> */}
-              <span className="mx-2">
-                {
-                  order?.isPaid ? 'Pagada' : 'Pendiente de pago'
-                }
-              </span>
-            </div>
+            <OrderStatus
+              isPaid={ order?.isPaid ?? false }
+            />
             
             
             
@@ -119,10 +103,19 @@ export default async function OrdersPageForId({ params }: Props) {
             </div>
 
             <div className="mt-5 mb-2 w-full">
-              <PayPalButton
-                orderId={ order?.id ?? '' }
-                amount={ order?.total ?? 0 }
-              />
+
+              {
+                order?.isPaid ? (
+                  <OrderStatus
+                    isPaid={ true }
+                  />
+                ): (
+                  <PayPalButton
+                    orderId={ order?.id ?? '' }
+                    amount={ order?.total ?? 0 }
+                  />
+                )
+              }
             </div>
 
           </div>
