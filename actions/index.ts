@@ -29,6 +29,7 @@ export * from "./payments/paypal-check-payment";
 // User
 export * from "./user/get-paginater-user";
 export * from "./user/change-user-role";
+export * from "./user/update-profile-user";
 
 // Category
 export * from "./category/get-categories";

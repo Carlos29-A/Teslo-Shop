@@ -1,6 +1,7 @@
 import { auth } from "@/auth"
 import { Title } from "@/components";
 import { redirect } from "next/navigation";
+import { ProfileForm } from "./ui/ProfileForm";
 
 export default async function ProfilePage() {
   
@@ -9,6 +10,7 @@ export default async function ProfilePage() {
     if(! session?.user ) {
         redirect("/")
     }
+    console.log({session: session.user});
   
     return (
         <div>
@@ -16,9 +18,9 @@ export default async function ProfilePage() {
                 title="Perfil"
                 subtitle="Mi perfil"
             />
-            <pre>
-                { JSON.stringify(session.user, null, 2) }
-            </pre>
+            <div className="w-[1000px] mx-auto mt-10 ">
+                <ProfileForm imageUrl={session.user.image!} name={session.user.name!} email={session.user.email!}/>
+            </div>
         </div>
     )
 }

@@ -7,6 +7,31 @@ import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     ...authConfig,
+    callbacks: {
+        ...authConfig.callbacks,
+        // Sesión siempre alineada con la BD (el JWT guarda datos del login y no se actualiza solo)
+        async session({ session, token }) {
+            const userId =
+                (typeof token.sub === "string" && token.sub) ||
+                (token.data as { id?: string } | undefined)?.id;
+
+            if (userId) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: userId },
+                });
+                if (dbUser) {
+                    const { password: _, ...userData } = dbUser;
+                    session.user = userData as typeof session.user;
+                    return session;
+                }
+            }
+
+            if (token.data) {
+                session.user = token.data as typeof session.user;
+            }
+            return session;
+        },
+    },
     providers: [
         Credentials({
             async authorize(credentials){
