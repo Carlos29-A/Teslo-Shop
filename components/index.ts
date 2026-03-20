@@ -11,6 +11,7 @@ export * from "./ui/pagination/Pagination";
 // Products
 export * from "./products/product-grid/ProductGrid";
 export * from "./products/product-grid/ProductGridItem";
+export * from "./product/product-image/ProductImage";
 
 // Product
 export * from "./product/size-selector/SizeSelector";

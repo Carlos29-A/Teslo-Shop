@@ -1,12 +1,10 @@
 export const revalidate = 0;
 
 import { getPaginationProductsWithImages } from '@/actions';
-import { Pagination, Title } from '@/components';
+import { Pagination, ProductImage, Title } from '@/components';
 import { currencyFormat } from '@/utils';
-import Image from 'next/image';
-
 import Link from 'next/link';
-import { IoAddOutline, IoCardOutline } from 'react-icons/io5';
+import { IoAddOutline } from 'react-icons/io5';
 
 interface Props {
   searchParams: Promise<{ page?: string; take?: string }>;
@@ -70,14 +68,14 @@ export default async function ProductsAdminPage( { searchParams }: Props ) {
                   className="bg-white border-b-2  border-b-gray-200 transition duration-300 ease-in-out hover:bg-gray-100">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <Link href={`/product/${product.slug}`}>
-                      <Image
-                        src={`/products/${product.ProductImage[0].url}`}
+                      <ProductImage
+                        src={ product.ProductImage[0]?.url }
                         alt={product.title}
                         width={100}
                         height={100}
                         className='w-20 h-20 object-cover rounded-md'
                       >                      
-                      </Image>
+                      </ProductImage> 
                     </Link>
                     
                   </td>
