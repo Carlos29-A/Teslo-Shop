@@ -54,7 +54,7 @@ export const createUpdateProduct = async (formData: FormData) => {
     
             if ( id ) {
                 // Actualizar el producto
-                product = await prisma.product.update({
+                product = await tx.product.update({
                     where: {
                         id: id,
                     },
@@ -72,7 +72,7 @@ export const createUpdateProduct = async (formData: FormData) => {
             
             }else{
                 // Crear el producto
-                product = await prisma.product.create({
+                product = await tx.product.create({
                     data: {
                         ...rest,
                         sizes: {
@@ -97,7 +97,7 @@ export const createUpdateProduct = async (formData: FormData) => {
                     throw new Error('Error al subir las imagenes, rollingback');
                 }
 
-                await prisma.productImages.createMany({
+                await tx.productImages.createMany({
                     data: images.map(image => ({
                         url: image!,
                         productId: product.id,
