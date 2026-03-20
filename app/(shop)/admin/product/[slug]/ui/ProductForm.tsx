@@ -1,6 +1,7 @@
 "use client";
 
-import { createUpdateProduct } from "@/actions";
+import { createUpdateProduct, deleteProductImage } from "@/actions";
+import { ProductImage as ProductImageComponent } from "@/components";
 import { ICategory, Product, ProductImage } from "@/interfaces";
 import clsx from "clsx";
 import Image from "next/image";
@@ -24,9 +25,7 @@ interface FormInputs {
   tags: string;
   gender: 'men'|'women'|'kid'|'unisex';
   categoryId: string;
-
-  //TODO: Images
-
+  images?: FileList;
 }
 
 
@@ -41,6 +40,8 @@ export const ProductForm = ({ product, categories }: Props) => {
       ...product,
       tags: product.tags?.join(', '),
       sizes: product.sizes ?? [],
+
+      images: undefined,
     }
   });
   watch("sizes");
@@ -48,7 +49,7 @@ export const ProductForm = ({ product, categories }: Props) => {
   const onSubmit = async (data: FormInputs) => {
     const formData = new FormData();
 
-    const { ...productToSave} = data;
+    const { images, ...productToSave} = data;
 
     if(product.id) {
       formData.append("id", product.id ?? '');
@@ -62,6 +63,12 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append("tags", productToSave.tags);
     formData.append("gender", productToSave.gender);
     formData.append("categoryId", productToSave.categoryId);
+    
+    if ( images ){
+      for ( let i = 0; i < images.length; i++ ){
+        formData.append('images', images[i]);
+      }
+    }
 
 
     const { ok, product: updatedProduct } = await createUpdateProduct(formData);
@@ -71,7 +78,7 @@ export const ProductForm = ({ product, categories }: Props) => {
       return;
     }
 
-    router.replace(`/admin/products/${updatedProduct?.slug}`);    
+    router.replace(`/admin/product/${updatedProduct?.slug}`);    
 
   }
 
@@ -200,7 +207,8 @@ export const ProductForm = ({ product, categories }: Props) => {
               type="file"
               multiple 
               className="p-2 border border-gray-300 rounded-md bg-gray-200" 
-              accept="image/png, image/jpeg"
+              accept="image/png, image/jpeg, image/avif"
+              {...register("images")}
             />
 
           </div>
@@ -209,18 +217,18 @@ export const ProductForm = ({ product, categories }: Props) => {
               {
                 product.ProductImage?.map( image => (
                   <div key={ image.id }>
-                    <Image 
+                    <ProductImageComponent 
                       alt={ product.title ?? '' } 
                       width={ 300 } 
                       height={ 300 } 
-                      src={ `/products/${image.url}` }
+                      src={ image.url }
                       className="rounded-t shadow-md"
                     />
 
                     <button
                       type="button"
                       className="bg-red-500 hover:bg-red-700 transition-all duration-300 ease-out text-white py-2 px-4 w-full rounded-b-xl cursor-pointer"
-                      onClick={() => console.log(image.id, image.url)}
+                      onClick={() => deleteProductImage(image.id, image.url)}
                     >
                       Eliminar
                     </button>

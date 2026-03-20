@@ -4,6 +4,9 @@ import { Product, Size } from "@/app/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config(process.env.CLOUDINARY_URL || '');
 
 
 const productSchema = z.object({
@@ -82,7 +85,27 @@ export const createUpdateProduct = async (formData: FormData) => {
                 })
     
             }
-            console.log(product);
+            // Proceso de cargar y guardar las imagenes
+            // Recorrer las imagenes y guardarlas
+
+            if(formData.get('images')){
+
+                // [https://url.com, https://url.com, https://url.com]
+                const images = await uploadImages(formData.getAll('images') as File[]);
+                
+                if(!images) {
+                    throw new Error('Error al subir las imagenes, rollingback');
+                }
+
+                await prisma.productImages.createMany({
+                    data: images.map(image => ({
+                        url: image!,
+                        productId: product.id,
+                    }))
+                })
+
+            }
+
     
             return {
                 product,
@@ -111,15 +134,39 @@ export const createUpdateProduct = async (formData: FormData) => {
         }
     }
 
-
-
-    //TODO: revalidatePaths
-
+}
 
 
 
-    return {
-        ok: true,
-        message: "Producto creado correctamente",
+const uploadImages = async ( images: File[]) => {
+
+    try {
+
+        const uploadPromises = images.map( async (image) => {
+
+            try{
+
+                const buffer = await image.arrayBuffer();
+                const base64Image = Buffer.from(buffer).toString('base64');
+
+
+                return cloudinary.uploader.upload(`data:image/png;base64,${base64Image}`)
+                    .then( result => result.secure_url);
+            
+            }catch(error){
+                console.log(error);
+                return null;
+            }            
+        })
+
+        const uploadedImages = await Promise.all(uploadPromises);
+
+        return uploadedImages;
+
+
+    }catch(error){
+        console.log(error);
+        return null;
     }
+
 }
