@@ -1,20 +1,48 @@
 "use server";
 
-import { Category } from "@/interfaces";
 import { prisma } from "@/lib/prisma";
 
 
 interface PaginationsOptions {
     page?: number;
     take?: number;
-    gender?: Category;
+    /** Nombre de la categoría en BD (ej. Shirts, Pants, Hoodies, Hats) */
+    categoryName?: string;
+    /** Texto de búsqueda (título, slug, descripción, nombre de categoría) */
+    query?: string;
 }
 
 
-export const getPaginationProductsWithImages = async ({ page = 1, take = 12, gender }: PaginationsOptions) => {
+export const getPaginationProductsWithImages = async ({ page = 1, take = 12, categoryName, query }: PaginationsOptions) => {
     if( isNaN(Number(page))) page = 1;
     if( page < 1) page = 1;
 
+    const q = query?.trim() ?? "";
+    const cat = categoryName?.trim() ?? "";
+
+    const where = {
+        ...(cat
+            ? {
+                  category: {
+                      name: { equals: cat, mode: "insensitive" as const },
+                  },
+              }
+            : {}),
+        ...(q
+            ? {
+                  OR: [
+                      { title: { contains: q, mode: "insensitive" as const } },
+                      { slug: { contains: q, mode: "insensitive" as const } },
+                      { description: { contains: q, mode: "insensitive" as const } },
+                      {
+                          category: {
+                              name: { contains: q, mode: "insensitive" as const },
+                          },
+                      },
+                  ],
+              }
+            : {}),
+    };
 
     try {
         // 1.- Obtener el total de productos
@@ -29,15 +57,11 @@ export const getPaginationProductsWithImages = async ({ page = 1, take = 12, gen
                     }
                 }
             },
-            where : {
-                gender: gender,
-            }
+            where,
         });
         // 2.- total de páginas
         const totalCount = await prisma.product.count({
-            where: {
-                gender: gender,
-            }
+            where,
         });
         const totalPages = Math.ceil(totalCount / take);
 
