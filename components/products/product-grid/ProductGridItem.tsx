@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductImage } from "@/components";
 import { Product } from "@/interfaces"
 import { currencyFormat } from "@/utils";
 import Image from "next/image";
@@ -25,16 +26,16 @@ export const ProductGridItem = ({ product }: Props) => {
                 onMouseEnter={() => hasSecondImage && setDisplayImage(product.images[1])}
                 onMouseLeave={() => setDisplayImage(product.images[0])}
             >
-                <Image
-                    src={`/products/${product.images[0]}`}
+                <ProductImage
+                    src={product.images[0]}
                     alt={product.title}
                     className={`absolute inset-0 w-full h-full object-cover rounded transition-opacity duration-500 ease-in-out ${displayImage === product.images[0] ? "opacity-100" : "opacity-0"}`}
                     width={500}
                     height={500}
                 />
                 {hasSecondImage && (
-                    <Image
-                        src={`/products/${product.images[1]}`}
+                    <ProductImage
+                        src={product.images[1]}
                         alt={product.title}
                         className={`absolute inset-0 w-full h-full object-cover rounded transition-opacity duration-500 ease-in-out ${displayImage === product.images[1] ? "opacity-100" : "opacity-0"}`}
                         width={500}
