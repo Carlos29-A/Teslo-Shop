@@ -31,7 +31,7 @@ export const createUpdateProduct = async (formData: FormData) => {
 
     if (!productParsed.success) {
 
-        console.log( productParsed.error)
+        console.log(productParsed.error)
 
         return {
             ok: false,
@@ -51,8 +51,8 @@ export const createUpdateProduct = async (formData: FormData) => {
 
             let product: Product;
             const tagsArray = rest.tags.split(',').map(tag => tag.trim().toLowerCase());
-    
-            if ( id ) {
+
+            if (id) {
                 // Actualizar el producto
                 product = await tx.product.update({
                     where: {
@@ -68,9 +68,9 @@ export const createUpdateProduct = async (formData: FormData) => {
                         },
                     }
                 })
-    
-            
-            }else{
+
+
+            } else {
                 // Crear el producto
                 product = await tx.product.create({
                     data: {
@@ -83,17 +83,17 @@ export const createUpdateProduct = async (formData: FormData) => {
                         },
                     }
                 })
-    
+
             }
             // Proceso de cargar y guardar las imagenes
             // Recorrer las imagenes y guardarlas
 
-            if(formData.get('images')){
+            if (formData.get('images')) {
 
                 // [https://url.com, https://url.com, https://url.com]
                 const images = await uploadImages(formData.getAll('images') as File[]);
-                
-                if(!images) {
+
+                if (!images) {
                     throw new Error('Error al subir las imagenes, rollingback');
                 }
 
@@ -106,7 +106,7 @@ export const createUpdateProduct = async (formData: FormData) => {
 
             }
 
-    
+
             return {
                 product,
             }
@@ -138,25 +138,25 @@ export const createUpdateProduct = async (formData: FormData) => {
 
 
 
-const uploadImages = async ( images: File[]) => {
+const uploadImages = async (images: File[]) => {
 
     try {
 
-        const uploadPromises = images.map( async (image) => {
+        const uploadPromises = images.map(async (image) => {
 
-            try{
+            try {
 
                 const buffer = await image.arrayBuffer();
                 const base64Image = Buffer.from(buffer).toString('base64');
 
 
                 return cloudinary.uploader.upload(`data:image/png;base64,${base64Image}`)
-                    .then( result => result.secure_url);
-            
-            }catch(error){
+                    .then(result => result.secure_url);
+
+            } catch (error) {
                 console.log(error);
                 return null;
-            }            
+            }
         })
 
         const uploadedImages = await Promise.all(uploadPromises);
@@ -164,7 +164,7 @@ const uploadImages = async ( images: File[]) => {
         return uploadedImages;
 
 
-    }catch(error){
+    } catch (error) {
         console.log(error);
         return null;
     }

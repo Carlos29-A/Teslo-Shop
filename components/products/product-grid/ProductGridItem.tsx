@@ -3,7 +3,6 @@
 import { ProductImage } from "@/components";
 import { Product } from "@/interfaces"
 import { currencyFormat } from "@/utils";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -13,7 +12,7 @@ interface Props {
 
 export const ProductGridItem = ({ product }: Props) => {
 
-    const [ displayImage, setDisplayImage ] = useState(product.images[0]);
+    const [displayImage, setDisplayImage] = useState(product.images[0]);
 
 
     const hasSecondImage = product.images.length > 1;
@@ -47,10 +46,10 @@ export const ProductGridItem = ({ product }: Props) => {
                 <Link
                     className="hover:text-blue-400 transition-all"
                     href={`/product/${product.slug}`}
-                >   
-                    { product.title }
+                >
+                    {product.title}
                 </Link>
-                <span className="font-bold ">{ currencyFormat(product.price) }</span>
+                <span className="font-bold ">{currencyFormat(product.price)}</span>
             </div>
         </div>
     )
