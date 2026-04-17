@@ -8,22 +8,23 @@ async function main() {
   // 1.- Borrar registros previos
   //await Promise.all([
   await prisma.orderAddress.deleteMany(),
-  await prisma.orderItem.deleteMany(),
-  await prisma.order.deleteMany(),
-  await prisma.user.deleteMany(),
-  await prisma.productImages.deleteMany(),
-  await prisma.product.deleteMany();
+    await prisma.orderItem.deleteMany(),
+    await prisma.order.deleteMany(),
+    await prisma.userAddress.deleteMany(),
+    await prisma.user.deleteMany(),
+    await prisma.productImages.deleteMany(),
+    await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   //])
 
   const { categories, products, users } = initialData;
-  
+
   // Usuarios
   await prisma.user.createMany({
     data: users
   });
-  
-  
+
+
   // Categorias
   const categoriesData = categories.map((name) => ({ name }))
 
@@ -38,11 +39,11 @@ async function main() {
   const categoriesMap = categoriesDB.reduce((map, category) => {
     map[category.name.toLowerCase()] = category.id;
     return map;
-  } , {} as Record<string, string>)
+  }, {} as Record<string, string>)
 
-  products.forEach( async product => {
+  products.forEach(async product => {
 
-    const { images, type, ...rest} = product;
+    const { images, type, ...rest } = product;
 
     const dbProduct = await prisma.product.create({
       data: {
@@ -52,7 +53,7 @@ async function main() {
     })
 
     //Images
-    const imagesData = images.map( image => ({
+    const imagesData = images.map(image => ({
       url: image,
       productId: dbProduct.id
     }))
@@ -61,7 +62,7 @@ async function main() {
       data: imagesData
     })
   });
-  
+
 
 
 
